@@ -5,7 +5,8 @@
 #################################
 
 ## List below here, in a comment/comments, the people you worked with on this assignment AND any resources you used to find code (50 point deduction for not doing so). If none, write "None".
-
+#Used Lecture Notes
+#Used online Star Wars API documentation
 
 
 ## [PROBLEM 1] - 150 points
