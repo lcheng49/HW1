@@ -11,13 +11,78 @@
 ## [PROBLEM 1] - 150 points
 ## Below is code for one of the simplest possible Flask applications. Edit the code so that once you run this application locally and go to the URL 'http://localhost:5000/class', you see a page that says "Welcome to SI 364!"
 
-from flask import Flask
+from flask import Flask, request
+import requests
+import json
 app = Flask(__name__)
 app.debug = True
 
-@app.route('/')
+@app.route('/class')
 def hello_to_you():
-    return 'Hello!'
+    return 'Welcome to SI 364!'
+
+@app.route('/movie/<name>')
+def get_movie_info(name):
+    baseurl = "https://itunes.apple.com/search"
+    params_diction = {}
+    params_diction["term"] = name
+    params_diction["entity"] = "movie"
+    resp = requests.get(baseurl, params = params_diction)
+    text = resp.text
+    python_obj = json.loads(text)
+    return str(python_obj)
+
+@app.route('/question', methods=['GET', 'POST'])
+def question():
+    return """ <form action = "/result" method = 'POST'>
+    Enter your favorite number: <input type="text" name="picked_num" value = "" <br></br>
+    <input type="submit" value="Submit">
+    </form> """
+
+@app.route('/result', methods=['POST'])
+def result():
+    if request.method == 'POST':
+        return "Double your favorite number is {}".format(int(request.form['picked_num'])*2)
+
+@app.route('/problem4form', methods=['GET', 'POST'])
+def yolo():
+    html_f = """<br>
+    <form action='problem4form' method='GET'>
+    Enter your name and select your favorite Star Wars planet! <br> <input type="text" name="name" value=''> <br>
+    <input type="checkbox" name="first" value="Tatooine"> Tatooine <br>
+  	<input type="checkbox" name="second" value="Alderaan"> Alderaan <br>
+  	<input type="checkbox" name="third" value="Yavin IV"> Yavin IV <br>
+  	<input type="submit" value="Submit">
+	</form>"""
+
+    if request.method == 'GET':
+        name = request.args.get("name")
+        if name:
+            result = "Hi {}.<br>".format(name)
+        else:
+            result = "Hi.<br>"
+        id = {"Tatooine": 1, "Alderaan": 2, "Yavin IV": 3}
+        planet = ["Tatooine", "Alderaan", "Yavin IV"]
+        print(request.args)
+        for x in request.args:
+            if request.args.get(x) in planet:
+                temp=str(id[request.args.get(x)])
+                baseurl="https://swapi.co/api/planets/"
+                resp = requests.get(baseurl + temp)
+                text= resp.text
+                python_obj = json.loads(text)
+                pop = python_obj["population"]
+                result += "The population of {} is {}.<br>".format(request.args.get(x), pop)
+        return html_f + result
+    else:
+        return html_f
+
+
+
+
+
+
+
 
 
 if __name__ == '__main__':
