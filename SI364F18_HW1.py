@@ -78,13 +78,6 @@ def yolo():
         return html_f
 
 
-
-
-
-
-
-
-
 if __name__ == '__main__':
     app.run()
 
